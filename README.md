@@ -8,7 +8,6 @@ I'm using this repository to:
 - Build small, focused projects
 - Learn by doing
 - Track my progress over time
-
-All code is released into the public domain under [The Unlicense](UNLICENSE). If there is any use to you, feel free.
+All code is released into the public domain under [The Unlicense](LICENSE). If there is any use to you, feel free.
 
 There are no guarantees of correctness or completeness.
