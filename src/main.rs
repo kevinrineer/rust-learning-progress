@@ -36,26 +36,93 @@ enum Commands {
     },
 }
 
-fn delete_todo(id: usize) {
-    println!("{} Gone", id);
+struct TodoItem {
+    id: usize,
+    task: String,
+    done: bool,
 }
-fn add_todo(description: String) {
-    println!("Added {}", description);
+
+struct TodoApp {
+    items: Vec<TodoItem>,
+    filepath: String,
 }
-fn mark_todo_done(id: usize) {
-    println!("{} Done", id);
+
+impl TodoItem {
+    pub fn display_item(&self) {
+        println!("{} {} {}", self.id, self.task, self.done);
+    }
 }
-fn list_todos() {
-    println!("TODOs");
+
+impl TodoApp {
+    fn new() -> Self {
+        Self {
+            items: vec![],
+            filepath: "todos.txt".to_string(),
+        }
+    }
+    fn load_todos(&mut self) {
+        let contents = std::fs::read_to_string(&self.filepath).expect("Failed to read the file");
+        let todos = &mut self.items;
+
+        for line in contents.lines() {
+            let elems: Vec<&str> = line.split('|').collect();
+            // If there's stuff, great. Otherwise, it should probably be 0 bytes.
+            if elems.len() == 3 {
+                let id = elems[0].parse().unwrap_or(0);
+                let task = elems[1].to_string();
+                let done = elems[2] == "true";
+                todos.push(TodoItem { id, task, done });
+            }
+        }
+    }
+    pub fn save(self) {
+        let filepath = self.filepath;
+        for item in &self.items {
+            let line = format!("{} {} {} \n", item.id, item.task, item.done);
+            std::fs::write(&filepath, line).unwrap();
+        }
+    }
+    pub fn delete_todo(&self, id: usize) {
+        /* TODO: Pop id out of vec */
+        println!("{} Gone", id);
+    }
+    pub fn add_todo(&self, description: String) {
+        /*TODO:
+         * 0. Get id of current end of list and add 1
+         * 1. Push new TodoItem to list with id+1, description, and done state of false */
+        println!("Added {}", description);
+    }
+    pub fn mark_todo_done(&self, id: usize) {
+        // TODO: Go to id and change done to true
+        println!("{} Done", id);
+    }
+    pub fn list_todos(&self) {
+        if self.items.is_empty() {
+            println!("No todos!");
+        } else {
+            for item in &self.items {
+                item.display_item();
+            }
+        }
+    }
+}
+
+impl Cli {
+    fn process_subcommand(self, app: &mut TodoApp) {
+        match self.command {
+            Commands::List => app.list_todos(),
+            Commands::Delete { id } => app.delete_todo(id),
+            Commands::Add { ref task } => app.add_todo(task.to_string()),
+            Commands::Done { id } => app.mark_todo_done(id),
+        }
+    }
 }
 
 fn main() {
-    let subcommands = Cli::parse();
+    let cli = Cli::parse();
+    let mut app = TodoApp::new();
+    app.load_todos();
+    cli.process_subcommand(&mut app);
 
-    match subcommands.command {
-        Commands::List => list_todos(),
-        Commands::Delete { id } => delete_todo(id),
-        Commands::Add { task } => add_todo(task),
-        Commands::Done { id } => mark_todo_done(id),
-    }
+    app.save();
 }
