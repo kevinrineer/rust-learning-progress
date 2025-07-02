@@ -1,0 +1,10 @@
+#+TITLE: "Rust Learning TODOs"
+#+AUTHOR: "Kevin Rineer"
+
+* TODOs [0/6]
+- [ ] 1. Show TODO item(s) via show
+- [ ] 2. Get new TODO item(s) via input
+- [ ] 3. Check off TODO item(s) via check
+- [ ] 4. Remove TODO item(s) via remove
+- [ ] 5. Always save to file
+- [ ] 6. Command line completion generation in ~build.rs~

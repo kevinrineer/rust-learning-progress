@@ -1,17 +1,9 @@
-/*
-* 1. Show TODO item(s) via show
-* 2. Get new TODO item(s) via input
-* 3. Check off TODO item(s) via check
-* 4. Remove TODO item(s) via remove
-* 5. Always save to file
-*/
-
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "todo")]
-#[command(about = "A simple todo CLI app")]
-struct Cli {
+#[command(about = "A simple todo args app")]
+struct Args {
     #[command(subcommand)]
     command: Commands,
 }
@@ -107,7 +99,7 @@ impl TodoApp {
     }
 }
 
-impl Cli {
+impl Args {
     fn process_subcommand(self, app: &mut TodoApp) {
         match self.command {
             Commands::List => app.list_todos(),
@@ -119,10 +111,10 @@ impl Cli {
 }
 
 fn main() {
-    let cli = Cli::parse();
+    let args = Args::parse();
     let mut app = TodoApp::new();
     app.load_todos();
-    cli.process_subcommand(&mut app);
+    args.process_subcommand(&mut app);
 
     app.save();
 }
